@@ -177,21 +177,20 @@ class Detector:
             image_w = int(size * scale)
         return cv.resize(image[y_start:y_end, x_start:x_end], (image_w, image_h))
 
-
-
+    #! ----- PreProcessing ----- ----- ----- -----
 
     @staticmethod
     def preprocess_image(image: np.ndarray, index: int=0, is_blank: bool=False) -> np.ndarray:
-        if is_blank:
-            return Detector._0_preprocess(image) # landmarks_on_blank
-        else:
-            return [Detector._0_preprocess, Detector._1_preprocess, Detector._2_preprocess, Detector._3_preprocess] [index] (image)
+        return Detector._0_preprocess(image) if is_blank else [Detector._0_preprocess,
+                                                               Detector._1_preprocess,
+                                                               Detector._2_preprocess,
+                                                               Detector._3_preprocess] [index] (image)
 
-    @staticmethod # No PreProcessing
+    @staticmethod #ToDo: No PreProcessing
     def _0_preprocess(image: np.ndarray) -> np.ndarray:
         return cv.cvtColor(image, cv.COLOR_RGB2GRAY)
 
-    @staticmethod
+    @staticmethod #ToDo: FG Focus
     def _1_preprocess(image: np.ndarray) -> np.ndarray:
         gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
         blur = cv.GaussianBlur(gray, (5, 5), 0)
@@ -201,11 +200,12 @@ class Detector:
                     cv.bitwise_and(blur, blur, mask=cv.bitwise_not(mask))
                 )
 
-    @staticmethod
+    @staticmethod #ToDo: UnImplemented Function
     def _2_preprocess(image: np.ndarray) -> np.ndarray:
-        return image
+        ...
+        return cv.cvtColor(image, cv.COLOR_RGB2GRAY)
 
-    @staticmethod # Sobel Edge Detection
+    @staticmethod #ToDo: Sobel Edge Detection
     def _3_preprocess(image: np.ndarray) -> np.ndarray:
         image = cv.medianBlur(cv.cvtColor(image, cv.COLOR_RGB2GRAY), ksize=3)
         return cv.GaussianBlur(
